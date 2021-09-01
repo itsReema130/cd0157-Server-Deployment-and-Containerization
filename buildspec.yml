@@ -22,6 +22,8 @@ phases:
       - apt-get update && apt-get -y install jq  && pip install --upgrade awscli
   pre_build:
       commands:
+        - pip3 install -r requirements.txt 
+        - python -m pytest test_main.py
         - TAG="$REPOSITORY_NAME.$REPOSITORY_BRANCH.$ENVIRONMENT_NAME.$(date +%Y-%m-%d.%H.%M.%S).$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | head -c 8)"
         - sed -i 's@CONTAINER_IMAGE@'"$REPOSITORY_URI:$TAG"'@' simple_jwt_api.yml
         - $(aws ecr get-login --no-include-email)
@@ -41,3 +43,6 @@ artifacts:
 env:
   parameter-store:         
     JWT_SECRET: JWT_SECRET
+# aefea7193c4e345909035e5bcea0cfbd-1463546878.us-east-2.elb.amazonaws.com 
+# export TOKEN=`curl -d '{"email":"<EMAIL>","password":"<PASSWORD>"}' -H "Content-Type: application/json" -X POST aefea7193c4e345909035e5bcea0cfbd-1463546878.us-east-2.elb.amazonaws.com /auth  | jq -r '.token'`
+# curl --request GET 'aefea7193c4e345909035e5bcea0cfbd-1463546878.us-east-2.elb.amazonaws.com/contents' -H "Authorization: Bearer ${TOKEN}" | jq 
